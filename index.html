@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Self-Distilled Trajectory-Aware Boltzmann Modeling: Bridging the Training-Inference Discrepancy in Diffusion Language Models">
+  <meta name="keywords" content="Diffusion Language Models, Supervised Fine-Tuning, Self-Distilled Trajectories, Boltzmann Modeling, Pairwise Ranking">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Self-Distilled Trajectory-Aware Boltzmann Modeling</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+  <style>
+    .tabom-row {
+      background-color: #dbeafe !important;
+      border-left: 5px solid #2563eb;
+      font-weight: 600;
+    }
+    .tabom-row td {
+      background-color: #dbeafe !important;
+    }
+  </style>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+
+<body>
+
+<nav class="navbar" role="navigation">
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="#">
+        <span class="icon"><i class="fas fa-home"></i></span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="column has-text-centered">
+        <h1 class="title is-1 publication-title">
+          Self-Distilled Trajectory-Aware Boltzmann Modeling:
+          Bridging the Training-Inference Discrepancy in Diffusion Language Models
+          <br>
+          <small><span style="font-size: 60%;">2026</span></small>
+        </h1>
+
+        <div class="is-size-5 publication-authors" style="font-weight: bold;">
+          <span class="author-block"><a href="https://tonyckc.github.io/">Kecheng Chen</a><sup>1,*</sup>,</span>
+          <span class="author-block"><a href="https://liuziru666.wixsite.com/homepage">Ziru Liu</a><sup>2,*,P</sup>,</span>
+          <span class="author-block"><a href="#">Xijia Tao</a><sup>3</sup>,</span>
+          <span class="author-block"><a href="https://scholars.cityu.edu.hk/en/persons/liuhui3/">Hui Liu</a><sup>1</sup>,</span>
+          <span class="author-block"><a href="#">Yibing Liu</a><sup>1</sup>,</span>
+          <span class="author-block"><a href="#">Xinyu Fu</a><sup>2</sup>,</span>
+          <span class="author-block"><a href="#">Shi Wu</a><sup>2</sup>,</span>
+          <span class="author-block"><a href="#">Suiyun Zhang</a><sup>2</sup>,</span>
+          <span class="author-block"><a href="#">Dandan Tu</a><sup>2,C</sup>,</span>
+          <span class="author-block"><a href="https://www.cs.hku.hk/people/academic-staff/lpk">Lingpeng Kong</a><sup>3</sup>,</span>
+          <span class="author-block"><a href="https://ruiliu-ai.github.io/">Rui Liu</a><sup>2,C</sup>,</span>
+          <span class="author-block"><a href="https://hlli1991.github.io/">Haoliang Li</a><sup>1,C</sup></span>
+        </div>
+
+        <div class="is-size-5 publication-authors" style="margin-top:10px; font-weight: bold;">
+          <span class="author-block"><sup>1</sup> City University of Hong Kong</span><br>
+          <span class="author-block"><sup>2</sup> Huawei Research</span><br>
+          <span class="author-block"><sup>3</sup> The University of Hong Kong</span><br>
+        </div>
+        <div class="is-size-6 publication-authors" style="margin-top:8px;">
+          <span><sup>*</sup>Equal contribution. <sup>C</sup>Corresponding authors. <sup>P</sup>Project lead.</span>
+        </div>
+
+        <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+              <a href="assets/TABOM_paper.pdf"
+                   class="external-link button is-normal is-rounded is-dark">
+                <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+              <a href="#bibtex"
+                   class="external-link button is-normal is-rounded is-dark">
+                <span class="icon"><i class="ai ai-arxiv"></i></span>
+                <span>BibTeX</span>
+                </a>
+              </span>
+              <span class="link-block">
+              <a href="https://github.com/tonyckc/TABOM"
+                   class="external-link button is-normal is-rounded is-dark">
+                <span class="icon"><i class="fab fa-github"></i></span>
+                <span>Code</span>
+                  </a>
+              </span>
+          </div>
+          </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <img src="assets/framework3.jpeg" width="100%" alt="TABOM framework overview">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="box" style="background:#f7f9fc;">
+      <h2 class="title is-3 has-text-centered">TL;DR</h2>
+    <div class="content has-text-justified">
+      <p>
+          🚀 Diffusion Language Models generate text by progressively unmasking tokens, usually from
+          easy tokens to hard tokens. However, standard supervised fine-tuning still trains them as
+          if all masked tokens were equally important and equally difficult. <b>TABOM fixes this
+          training-inference mismatch</b> by learning from the model's own self-distilled decoding
+          trajectories and adding a ranking objective that teaches the model which tokens should
+          become confident earlier.
+        </p>
+        <p>
+          ✅ The result is a post-training recipe that <b>turns self-distilled trajectories into
+          real capability gains</b>, rather than using them only for faster sampling.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Abstract</h2>
+    <div class="content has-text-justified">
+      <p>
+        Diffusion Language Models (DLMs) have recently emerged as a promising alternative to
+        autoregressive language models, offering stronger global awareness and highly parallel
+        generation. However, post-training DLMs with standard Negative Evidence Lower Bound
+        (NELBO)-based supervised fine-tuning remains inefficient: training reconstructs randomly
+        masked tokens in a single step, whereas inference follows a confidence-guided, multi-step
+        easy-to-hard denoising trajectory. Recent trajectory-based self-distillation methods exploit
+        such inference trajectories mainly for sampling-step compression and acceleration, often
+        improving decoding efficiency without substantially enhancing the model's underlying
+        capability, and may even degrade performance under full diffusion decoding.
+      </p>
+      <p>
+        We propose <b>Trajectory-Aligned Optimization via Boltzmann Modeling (TABOM)</b>, a
+        self-distilled trajectory-based post-training framework that aligns training with the
+        easy-to-hard structure of inference. TABOM models the inference unmasking preference as a
+        Boltzmann distribution over predictive entropies and derives a tractable pairwise ranking
+        objective to align the model's certainty ordering with the observed decoding trajectory.
+        Empirically, TABOM achieves substantial gains in new domains, expands the effective
+        knowledge boundary of DLMs, and significantly mitigates catastrophic forgetting compared
+        with standard SFT.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Why Is Standard SFT Not Enough?</h2>
+    <div class="content has-text-justified">
+      <p>
+        🔍 <b>The key difficulty is a hidden mismatch between training and inference.</b> During
+        NELBO-style SFT, a DLM receives a randomly masked sequence and is asked to reconstruct all
+        masked tokens in one shot. This objective is simple and scalable, but it implicitly treats
+        all masked positions uniformly. In other words, a very easy token and a very hard token
+        contribute to the same reconstruction objective without considering their order in the
+        actual decoding process.
+      </p>
+      <p>
+        ⚡ <b>Inference behaves very differently.</b> A DLM does not recover all tokens at once. It repeatedly
+        estimates token confidence or entropy, unmasks a subset of high-confidence tokens, and then
+        uses these newly recovered tokens as context for later decisions. This creates an
+        <b>easy-to-hard trajectory</b>: easy tokens should become certain first, while difficult
+        tokens are resolved later with richer context.
+      </p>
+      <ul>
+        <li><b>Uniform training bias:</b> all masked tokens are reconstructed under the same objective.</li>
+        <li><b>Easy-to-hard inference bias:</b> high-confidence tokens are decoded earlier and shape later context.</li>
+        <li><b>Core question:</b> can self-distilled trajectories be used for genuine knowledge acquisition, not merely faster decoding?</li>
+      </ul>
+      <p>
+        💡 Self-distilled trajectories are attractive because they lie on the pretrained model's own
+        distributional manifold. But if we still train them with a uniform reconstruction loss, the
+        model sees the trajectory data without learning the ordering preference behind the
+        trajectory. <b>This is the central issue TABOM targets.</b>
+      </p>
+    </div>
+  </div>
+</section>
+  
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Empirical Observation</h2>
+    <div class="content has-text-justified">
+      <p>
+        📉 Our preliminary diagnostics compare offline ground-truth SFT and self-distilled SFT across
+        code generation and mathematical reasoning. The observation is consistent: self-distilled
+        trajectories reduce the optimization barrier and help avoid catastrophic forgetting, but
+        they still provide only marginal gains when trained with the same NELBO objective.
+        <b>The bottleneck is not only the data source, but also the training objective.</b>
+      </p>
+    </div>
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <img src="assets/loss_ratio_gt_vs_sd_code_full.png" width="100%" alt="Code-domain loss-ratio diagnostic">
+      </div>
+      <div class="column">
+        <img src="assets/loss_ratio_gt_vs_sd_math_full.png" width="100%" alt="Math-domain loss-ratio diagnostic">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">How TABOM Works</h2>
+    <div class="content has-text-justified">
+      <p>
+        🧭 TABOM keeps the useful part of self-distillation while changing what the model is asked to
+        learn. Instead of only reconstructing tokens from trajectory states, it also learns the
+        <i>relative certainty ordering</i> encoded by the trajectory. Intuitively, if token A is
+        decoded before token B in an entropy-guided trajectory, the model should assign token A
+        lower entropy than token B under the corresponding context.
+      </p>
+
+      <p>
+        As a foundation, TABOM uses self-distilled trajectory states as reconstruction contexts
+        instead of relying only on uniformly random masks. The key difference, however, is not just
+        the data: <b>TABOM explicitly models and optimizes the inference-time ordering preference.</b>
+      </p>
+
+      <h3 class="title is-4">Boltzmann Modeling of Inference Preference</h3>
+      <p>
+        🔥 We view the easy-to-hard unmasking behavior as a probability distribution over possible
+        unmasked states. States containing easier, lower-entropy tokens should receive higher
+        probability. TABOM formalizes this preference as a Boltzmann distribution over predictive
+        entropies, turning training-inference alignment into a principled distribution matching
+        problem.
+      </p>
+      <div class="box">
+        $$
+        q_{\mathrm{infer}}^\star(U \mid \mathbf{x}_0)
+        =
+        \frac{1}{Z_\theta}
+        \exp\!\left(
+        -\beta \sum_{r\in U} h_\theta(r;\tau)
+        \right),
+        \qquad
+        h_\theta(r;\tau)=\mathcal{H}_\theta(x_0^r \mid \mathbf{x}_0^{U_t}, \mathbf{s}).
+        $$
+      </div>
+
+      <h3 class="title is-4">Energy-Based Pairwise Ranking</h3>
+      <p>
+        🎯 Ideally, training should make the model-induced unmasking distribution match the
+        Boltzmann target above. This gives a KL alignment objective:
+      </p>
+      <div class="box">
+        $$
+        \min_{\theta}\ 
+        D_{\mathrm{KL}}\!\left(
+        q_{\mathrm{infer}}^\star(U \mid \mathbf{x}_0)
+        \,\|\, p_\theta(U \mid \mathbf{x}_0,\mathbf{s})
+        \right).
+        $$
+      </div>
+      <p>
+        Directly optimizing this KL objective is intractable because it requires sampling from the
+        global target distribution and computing the partition function. TABOM therefore derives a
+        local pairwise ranking loss that <b>shapes the entropy landscape</b> so that earlier decoded
+        tokens become more certain than later decoded tokens within a local timestep window.
+      </p>
+      <div class="box">
+        $$
+        \mathcal{L}_{\mathrm{rank}}
+        =
+        \frac{2}{W(W-1)}
+        \sum_{(r,s)\in\mathcal{P}_{t,t'}}
+        \max\big(0,\ h_\theta(r;\tau)-h_\theta(s;\tau)+\gamma\big),
+        \qquad
+        \mathcal{L}_{\mathrm{TABOM}}
+        =
+        \mathcal{L}_{\mathrm{traj}}+\lambda \mathcal{L}_{\mathrm{rank}}.
+        $$
+      </div>
+      <p>
+        ✨ This local ranking view is important in practice. Comparing tokens decoded at vastly
+        different stages can be noisy because their difficulties are inherently different. TABOM
+        therefore ranks tokens inside a local decoding window, which better matches the step-wise
+        nature of diffusion inference.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">What Do the Experiments Show?</h2>
+    <div class="content has-text-justified">
+      <p>
+        We evaluate TABOM on Dream-7B-Instruct and LLaDA-8B-Instruct across two post-training
+        domains: code generation and mathematical reasoning. Each fine-tuned model is evaluated not
+        only on its in-domain tasks, but also on out-of-distribution tasks. This matters because
+        standard SFT can improve a target domain while damaging the pretrained model's broader
+        capabilities.
+      </p>
+    </div>
+    <div class="content">
+      <h3 class="title is-4 has-text-centered">Code Generation Fine-Tuning</h3>
+    </div>
+    <div class="table-container">
+      <table class="table is-bordered is-striped is-hoverable is-fullwidth has-text-centered" style="font-size: 0.78rem;">
+        <thead>
+          <tr>
+            <th rowspan="2">Method</th>
+            <th colspan="3">In-Domain</th>
+            <th colspan="4">Out-of-Distribution</th>
+          </tr>
+          <tr>
+            <th>HumanEval</th><th>MBPP</th><th>Avg.</th>
+            <th>GSM8K</th><th>MATH500</th><th>IFEval</th><th>Avg.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th colspan="8">Base Model: Dream-7B-Instruct</th></tr>
+          <tr><td>No-SFT</td><td>52.66</td><td>58.00</td><td>55.33</td><td>81.41</td><td>39.80</td><td>56.56</td><td>59.26</td></tr>
+          <tr><td>SFT-GT</td><td><b>61.55</b></td><td>58.00</td><td>59.78</td><td>52.33</td><td>32.40</td><td>46.21</td><td>43.65</td></tr>
+          <tr><td>SFT-SD</td><td>53.66</td><td>59.20</td><td>56.43</td><td>81.81</td><td>41.60</td><td>57.10</td><td><b>60.17</b></td></tr>
+          <tr><td>dInfer</td><td>57.31</td><td>58.20</td><td>57.76</td><td><b>81.88</b></td><td>39.80</td><td><b>57.30</b></td><td>59.66</td></tr>
+          <tr><td>T3D</td><td>55.48</td><td>58.70</td><td>57.09</td><td>81.84</td><td>40.70</td><td>57.20</td><td>59.91</td></tr>
+          <tr class="tabom-row"><td><b>TABOM</b></td><td>60.36</td><td><b>60.60</b></td><td><b>60.48</b></td><td>81.73</td><td><b>42.40</b></td><td>55.45</td><td>59.86</td></tr>
+          <tr><th colspan="8">Base Model: LLaDA-8B-Instruct</th></tr>
+          <tr><td>No-SFT</td><td>36.01</td><td>39.20</td><td>37.61</td><td>76.12</td><td>36.20</td><td>33.08</td><td>48.47</td></tr>
+          <tr><td>SFT-GT</td><td>42.01</td><td>32.80</td><td>37.41</td><td>70.73</td><td>35.40</td><td><b>34.93</b></td><td>47.02</td></tr>
+          <tr><td>SFT-SD</td><td>39.63</td><td>38.80</td><td>39.22</td><td>76.95</td><td>35.80</td><td>32.90</td><td>48.55</td></tr>
+          <tr><td>dInfer</td><td>41.46</td><td>38.60</td><td>40.03</td><td><b>77.33</b></td><td>36.60</td><td>33.82</td><td>49.25</td></tr>
+          <tr><td>T3D</td><td>40.54</td><td>38.70</td><td>39.62</td><td>77.14</td><td>36.20</td><td>33.36</td><td>48.90</td></tr>
+          <tr class="tabom-row"><td><b>TABOM</b></td><td><b>42.68</b></td><td><b>40.00</b></td><td><b>41.34</b></td><td><b>77.33</b></td><td><b>38.20</b></td><td>34.19</td><td><b>49.91</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="content">
+      <h3 class="title is-4 has-text-centered">Mathematical Reasoning Fine-Tuning</h3>
+    </div>
+    <div class="table-container">
+      <table class="table is-bordered is-striped is-hoverable is-fullwidth has-text-centered" style="font-size: 0.78rem;">
+        <thead>
+          <tr>
+            <th rowspan="2">Method</th>
+            <th colspan="3">In-Domain</th>
+            <th colspan="4">Out-of-Distribution</th>
+          </tr>
+          <tr>
+            <th>GSM8K</th><th>MATH500</th><th>Avg.</th>
+            <th>HumanEval</th><th>MBPP</th><th>IFEval</th><th>Avg.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th colspan="8">Base Model: Dream-7B-Instruct</th></tr>
+          <tr><td>No-SFT</td><td>81.41</td><td>39.80</td><td>60.61</td><td>52.66</td><td>58.00</td><td>56.56</td><td>55.74</td></tr>
+          <tr><td>SFT-GT</td><td>80.12</td><td>37.40</td><td>58.76</td><td>46.34</td><td>58.00</td><td>53.23</td><td>52.52</td></tr>
+          <tr><td>SFT-SD</td><td>81.95</td><td>39.80</td><td>60.88</td><td>57.92</td><td>58.60</td><td>56.01</td><td>57.51</td></tr>
+          <tr><td>dInfer</td><td>82.33</td><td><b>41.60</b></td><td>61.97</td><td>56.11</td><td>58.80</td><td>55.82</td><td>56.91</td></tr>
+          <tr><td>T3D</td><td>82.14</td><td>40.70</td><td>61.42</td><td>57.01</td><td>58.70</td><td>55.91</td><td>57.21</td></tr>
+          <tr class="tabom-row"><td><b>TABOM</b></td><td><b>84.31</b></td><td>41.10</td><td><b>62.71</b></td><td><b>58.54</b></td><td><b>59.20</b></td><td><b>56.19</b></td><td><b>57.98</b></td></tr>
+          <tr><th colspan="8">Base Model: LLaDA-8B-Instruct</th></tr>
+          <tr><td>No-SFT</td><td>76.12</td><td>36.20</td><td>56.16</td><td>36.01</td><td>39.20</td><td>33.08</td><td>36.10</td></tr>
+          <tr><td>SFT-GT</td><td>74.29</td><td>35.50</td><td>54.90</td><td>31.09</td><td><b>40.60</b></td><td>26.98</td><td>32.89</td></tr>
+          <tr><td>SFT-SD</td><td>75.96</td><td>35.70</td><td>55.83</td><td>36.58</td><td>39.80</td><td><b>34.38</b></td><td>36.92</td></tr>
+          <tr><td>dInfer</td><td>76.72</td><td>36.50</td><td>56.61</td><td>38.90</td><td>39.40</td><td><b>34.38</b></td><td>37.56</td></tr>
+          <tr><td>T3D</td><td>76.34</td><td>36.10</td><td>56.22</td><td>37.74</td><td>39.60</td><td><b>34.38</b></td><td>37.24</td></tr>
+          <tr class="tabom-row"><td><b>TABOM</b></td><td><b>78.62</b></td><td><b>36.80</b></td><td><b>57.71</b></td><td><b>40.30</b></td><td>40.10</td><td>32.98</td><td><b>37.79</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="content has-text-justified">
+      <p>
+        🏆 <b>TABOM consistently achieves the strongest in-domain average</b> across both base
+        models and training domains. More importantly, it preserves or improves OOD performance,
+        avoiding the catastrophic forgetting often observed when standard SFT is applied to
+        new-domain data.
+      </p>
+      <p>
+        📌 The table highlights the main story of the paper. SFT-SD is safer than ground-truth SFT
+        because it stays closer to the pretrained model's manifold, but its gains are often small.
+        <b>TABOM keeps this stability while turning the self-distilled trajectories into larger
+        performance improvements.</b>
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">A Diagnostic View: Trajectory Discrimination Score</h2>
+    <div class="content has-text-justified">
+      <p>
+        🔬 To check whether a model really learns the easy-to-hard structure, we introduce
+        <b>Trajectory Discrimination Score (TDS)</b>. At each decoding step, TDS measures the
+        variance of predictive entropy across currently masked tokens. A high TDS means the model
+        assigns clearly different uncertainty levels to different tokens; a low TDS means the model
+        treats masked tokens almost uniformly.
+      </p>
+    </div>
+    <div class="columns is-centered">
+      <div class="column">
+        <img src="assets/var_entropy_masked_vs_step_mbpp.png" width="100%" alt="MBPP trajectory discrimination score curve">
+      </div>
+      <div class="column">
+        <img src="assets/var_entropy_masked_vs_step_gsm8k.png" width="100%" alt="GSM8K trajectory discrimination score curve">
+      </div>
+    </div>
+    <div class="content has-text-justified">
+      <p>
+        Higher TDS indicates stronger discrimination between easy and hard tokens at the same
+        decoding step. <b>TABOM produces a more discriminative entropy landscape</b>, providing
+        mechanism evidence that its gains come from better trajectory alignment rather than simply
+        reusing self-generated samples.
+      </p>
+      <p>
+        ✅ In other words, TABOM does not merely expose the model to more intermediate states.
+        <b>It changes the shape of the model's uncertainty landscape</b> so that the learned model
+        behaves more like the inference process it will actually use.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="bibtex">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+<pre><code>@article{chen2026tabom,
+  title={Self-Distilled Trajectory-Aware Boltzmann Modeling: Bridging the Training-Inference Discrepancy in Diffusion Language Models},
+  author={Chen, Kecheng and Liu, Ziru and Tao, Xijia and Liu, Hui and Liu, Yibing and Fu, Xinyu and Wu, Shi and Zhang, Suiyun and Tu, Dandan and Kong, Lingpeng and Liu, Rui and Li, Haoliang},
+  journal={arXiv preprint},
+  year={2026}
+}</code></pre>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p>Website template adapted from the CCD-DLM project page.</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
