@@ -28,6 +28,21 @@
     .tabom-row td {
       background-color: #dbeafe !important;
     }
+    .visitor-globe-section {
+      padding-top: 2rem;
+      padding-bottom: 2.5rem;
+      background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);
+    }
+    .visitor-globe-widget {
+      min-height: 420px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .visitor-globe-widget script,
+    .visitor-globe-widget iframe {
+      margin: 0 auto;
+    }
   </style>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -464,6 +479,22 @@
   journal={arXiv preprint},
   year={2026}
 }</code></pre>
+  </div>
+</section>
+
+<section class="section visitor-globe-section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-4 has-text-centered">
+      <span class="icon"><i class="fas fa-globe-americas"></i></span>
+      Visitor Globe
+    </h2>
+    <p class="has-text-centered is-size-7 has-text-grey" style="margin-bottom: 1.25rem;">
+      Real-time visitor origins (powered by
+      <a href="https://clustrmaps.com" target="_blank" rel="noopener">Clustrmaps</a>).
+    </p>
+    <div class="has-text-centered visitor-globe-widget">
+      <script type="text/javascript" id="clstr_globe" src="//clustrmaps.com/globe.js?d=aWb4c3cUdJjOEhOPlp-LmLtiafDTSKy1D8k2hq3y7rw"></script>
+    </div>
   </div>
 </section>
 
